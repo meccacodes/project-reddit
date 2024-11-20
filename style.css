@@ -1,0 +1,25 @@
+body {
+  background-color: #000;
+  color: #fff;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+p {
+  font-size: 17px;
+}
+
+.post-form {
+  width: 80%;
+}
+
+.posts-feed {
+  width: 80%;
+}
+
+.posts-container {
+  width: 80%;
+}

@@ -3,9 +3,10 @@ body {
   color: #fff;
 }
 
-h1,
-h2 {
+h1 {
   text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 p {
@@ -22,4 +23,42 @@ p {
 
 .posts-container {
   width: 80%;
+}
+
+.removePost {
+  color: red;
+}
+
+.removePost:hover {
+  text-decoration: underline;
+}
+
+.addComment {
+  color: yellow;
+  margin-left: 10px;
+}
+
+.addComment:hover {
+  text-decoration: underline;
+}
+
+.commentForm {
+  display: none;
+  margin-top: 15px;
+}
+
+.postUtilities {
+  margin-bottom: 50px;
+}
+
+.headerBreak {
+  border-top: 3px solid white;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.posts {
+  padding: 12px;
+  margin-bottom: 30px;
+  border-left: 3px solid white;
 }

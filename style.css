@@ -45,6 +45,7 @@ p {
 .commentForm {
   display: none;
   margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 .postUtilities {
@@ -61,4 +62,9 @@ p {
   padding: 12px;
   margin-bottom: 30px;
   border-left: 3px solid white;
+}
+
+.comment {
+  border-left: 2px solid white;
+  padding-left: 10px;
 }

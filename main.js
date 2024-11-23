@@ -8,6 +8,22 @@ const removeBtn = document.getElementsByClassName("removePost");
 const singlePost = document.getElementsByClassName("posts");
 const addComment = document.getElementsByClassName("addComment");
 
+const postStr = `<div class="conatiner-fluid postUtilities">
+      <span class="removePost">delete</span>
+      <span class="addComment">comment</span>
+      <div class="conatiner-fluid commentForm">
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Name</label>
+          <input type="user" class="form-control commentName" placeholder="@username"/>
+        </div>
+        <div class="mb-3">
+          <label for="post" class="form-label">Post</label>
+          <textarea class="form-control commentText" rows="3" placeholder="This post is cool because..."></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" id="post-btn">Add Comment</button>
+      </div>
+    </div>`;
+
 let posts = [
   {
     id: 1,
@@ -68,41 +84,28 @@ const preloadPosts = function () {
     if (posts[i].comments && posts[i].comments.length > 0) {
       commentsHTML = `
         <div class="comments-section" style="display: none;">
-          ${posts[i].comments
-            .map(
-              (comment) => `
-            <div class="comment">
+        ${posts[i].comments
+          .map(
+            (comment) => `
+            <div class="comment" data-comment-id="${comment.id}">
               <strong>${comment.user || "Anonymous"}:</strong>
               <p>${comment.comment}</p>
+              <span class="deleteComment">delete</span>
             </div>
           `
-            )
-            .join("")}
+          )
+          .join("")}
         </div>
         `;
     }
 
-    let postStr = `
+    let postString = `
       <h3>Posted by: ${posts[i].user}</h3>
       <p>${posts[i].post}</p>
-      <div class="conatiner-fluid postUtilities">
-        <span class="removePost">delete</span>
-        <span class="addComment">comment</span>
-        <div class="conatiner-fluid commentForm">
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Name</label>
-            <input type="user" class="form-control commentName" placeholder="@username"/>
-          </div>
-          <div class="mb-3">
-            <label for="post" class="form-label">Post</label>
-            <textarea class="form-control commentText" rows="3" placeholder="This post is cool because..."></textarea>
-          </div>
-          <button type="button" class="btn btn-primary" id="post-btn">Add Comment</button>
-        </div>
-      </div>
+      ${postStr}
       ${commentsHTML}
     `;
-    let postHTML = stringToHTML(postStr);
+    let postHTML = stringToHTML(postString);
     postsFeed.prepend(postHTML);
   }
 };
@@ -111,26 +114,11 @@ const getPostInputs = function () {
   submitBtn.addEventListener("click", function () {
     posts.push({ id: uniqueID(), user: user.value, post: post.value });
     let latestPost = posts.length - 1;
-    let postStr = `
+    let postString = `
     <h3>Posted by: ${posts[latestPost].user}</h3>
     <p>${posts[latestPost].post}</p>
-    <div class="conatiner-fluid postUtilities">
-      <span class="removePost">delete</span>
-      <span class="addComment">comment</span>
-      <div class="conatiner-fluid commentForm" style="display: none;">
-        <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label">Name</label>
-          <input type="user" class="form-control commentName" placeholder="@username"/>
-        </div>
-        <div class="mb-3">
-          <label for="post" class="form-label">Post</label>
-          <textarea class="form-control commentText" rows="3" placeholder="This post is cool because..."></textarea>
-        </div>
-        <button type="button" class="btn btn-primary" id="post-btn">Add Comment</button>
-      </div>
-      <div class="comments-section" style="display: none;"></div>
-    </div>`;
-    let postHTML = stringToHTML(postStr);
+    ${postStr}`;
+    let postHTML = stringToHTML(postString);
     postsFeed.prepend(postHTML);
   });
 };
@@ -180,19 +168,38 @@ const handleComments = function () {
       if (!commentsSection) {
         commentsSection = document.createElement("div");
         commentsSection.className = "comments-section";
-        post.prepend(commentsSection);
+        post.appendChild(commentsSection);
       }
 
       const commentHTML = `
-        <div class="comment">
-              <strong>${commentName || "Anonymous"}:</strong>
-              <p>${commentText}</p>
-            </div>
-      `;
-      commentsSection.insertAdjacentHTML("beforeend", commentHTML);
+      <div class="comment" data-comment-id="${
+        currentPost.comments[currentPost.comments.length - 1].id
+      }">
+        <strong>${commentName || "Anonymous"}:</strong>
+        <p>${commentText}</p>
+        <span class="deleteComment">delete</span>
+      </div>
+    `;
+
+      commentsSection.insertAdjacentHTML("afterbegin", commentHTML);
 
       post.querySelector(".commentName").value = "";
       post.querySelector(".commentText").value = "";
+    }
+
+    if (event.target.classList.contains("deleteComment")) {
+      const commentElement = event.target.closest(".comment");
+      const post = event.target.closest(".posts");
+      const commentId = commentElement.dataset.commentId;
+
+      const postIndex = Array.from(postsFeed.children).indexOf(post);
+      const currentPost = posts[posts.length - 1 - postIndex];
+
+      currentPost.comments = currentPost.comments.filter(
+        (comment) => comment.id !== commentId
+      );
+
+      commentElement.remove();
     }
   });
 };
